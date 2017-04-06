@@ -8,9 +8,15 @@ Being Bayesian, BayeScan incorporates the uncertainty on allele frequencies due 
 
 Selection is introduced by decomposing locus--population FST coefficients into a population-specific component (beta), shared by all loci and a locus-specific component (alpha) shared by all the populations using a logistic regression. Departure from neutrality at a given locus is assumed when the locus-specific component is necessary to explain the observed pattern of diversity (alpha significantly different from 0). A positive value of alpha suggests diversifying selection, whereas negative values suggest balancing or purifying selection. This leads to two alternative models for each locus, including or not the alpha component to model selection. BayeScan implements a reversible-jump MCMC algorithm to estimate the posterior probability of each one of these models.
 
-For each locus, BayeScan calculates a posterior probability for the model including selection. These probabilities are very convenient to make decision in the context multiple testing (testing a large number of markers simultaneously). Please note that a posterior probability can NOT be compared directly to a p-value like the one obtained using the FDist software by Mark Beaumont. In Bayesian statistics, model choice decision can be performed using the so-called "Bayes factors". Given a problem in which we have to choose between two models M1 and M2 (say neutral and selection), on the basis of a data set N, the Bayes factor BF for model M2 is given by BF=P(N|M2)/P(N|M1). The Bayes factor provides a scale of evidence in favor of one model versus another. For example, BF=2 indicates that the data favors model M2 over model M1 at odds of two to one. The next table gives Jeffreys' scale of evidence for Bayes factors:
+For each locus, BayeScan calculates a posterior probability for the model including selection. These probabilities are very convenient to make decision in the context multiple testing (testing a large number of markers simultaneously). Please note that a posterior probability can NOT be compared directly to a p-value like the one obtained using the FDist software by Mark Beaumont. In Bayesian statistics, model choice decision can be performed using the so-called ["Bayes factors"](https://en.wikipedia.org/wiki/Bayes_factor). Given a problem in which we have to choose between two models M1 and M2 (say neutral and selection), on the basis of a data set N, the Bayes factor BF for model M2 is given by BF=P(N|M2)/P(N|M1). The Bayes factor provides a scale of evidence in favor of one model versus another. For example, BF=2 indicates that the data favors model M2 over model M1 at odds of two to one. The next table gives Jeffreys' scale of evidence for Bayes factors:
 
-
+|    P(α≠0)   | Bayes Factor (BF) | log10(BF) | Jeffreys' interpretation |
+|:-----------:|:-----------------:|:---------:|:------------------------:|
+| 0.50 → 0.76 |       1 → 3       |  0 → 0.5  |  Barely worth mentioning |
+| 0.76 → 0.91 |       3 → 10      |  0.5 → 1  |        Substantial       |
+| 0.91 → 0.97 |      10 → 32      |  1 → 1.5  |          Strong          |
+| 0.97 → 0.99 |      32 → 100     |  1.5 → 2  |        Very strong       |
+| 0.99 → 1.00 |      100 → ∞      |   2 → ∞   |         Decisive         |
 
 As a result, a Bayes factor of 3 corresponding to a posterior probability of 0.76, is already considered as being a "substantial" evidence for selection (although p-value of 1-0.76=0.24 is generally considered as a very weak signal in classical statistics). 
 
@@ -18,13 +24,13 @@ In the context of multiple testing, we also need to incorporate our skepticism a
 
 BayeScan and its improvements have been described successively in:
 
--  Foll, M and OE Gaggiotti (2008) A genome scan method to identify selected loci appropriate for both dominant and codominant markers: A Bayesian perspective. *Genetics* 180: 977-993
--  Foll M, Fischer MC, Heckel G and L Excoffier (2010) Estimating population structure from AFLP amplification intensity. *Molecular Ecology* 19: 4638-4647
--  Fischer MC, Foll M, Excoffier L and G Heckel (2011) Enhanced AFLP genome scans detect local adaptation in high-altitude populations of a small rodent (*Microtus arvalis*). *Molecular Ecology* 20: 1450--1462
+-  Foll, M and OE Gaggiotti (2008) A genome scan method to identify selected loci appropriate for both dominant and codominant markers: A Bayesian perspective. [*Genetics* 180: 977-993](http://www.genetics.org/content/180/2/977)
+-  Foll M, Fischer MC, Heckel G and L Excoffier (2010) Estimating population structure from AFLP amplification intensity. [*Molecular Ecology* 19: 4638-4647](http://onlinelibrary.wiley.com/doi/10.1111/j.1365-294X.2010.04820.x/abstract;jsessionid=8FBAAFE46C090B0325483A8F455D299E.f03t02)
+-  Fischer MC, Foll M, Excoffier L and G Heckel (2011) Enhanced AFLP genome scans detect local adaptation in high-altitude populations of a small rodent (*Microtus arvalis*). [*Molecular Ecology* 20: 1450-1462](http://onlinelibrary.wiley.com/doi/10.1111/j.1365-294X.2011.05015.x/abstract)
 
 ## 2. BayeScan usage
 
-BayeScan is command line based open source software, published under the GNU General Public License as published by the Free Software Foundation (see http://www.gnu.org/licenses/). BayeScan is coded using standard C++ and can be easily compiled under any system having a C++ compiler available using the `Makefile` provided along with the source code (just typing `make` in a terminal in the source folder should create the executable file). We provide executable ready to be used under Windows, MacOS (intel), Linux 32bits and 64 bits. Since version 2.1, the command line version of BayeScan has been optimized to work on multicore processors. In practice this means that it will be much faster than previous versions as most machines now have at least 4 cores. By default BayeScan will detect the number of cores available on your machine and use them all (this number is written on the console at the beginning of the calculation). As this can make your computer difficult to use for other tasks at the same time, you can also force BayeScan to use the number n you want using the `-threads n` option.
+BayeScan is command line based open source software, published under the GNU General Public License as published by the Free Software Foundation (see http://www.gnu.org/licenses/). BayeScan is coded using standard C++ and can be easily compiled under any system having a C++ compiler available using the `Makefile` provided along with the source code (just typing `make` in a terminal in the source folder should create the executable file). We provide executable ready to be used under Windows, MacOS (intel), Linux 32 bits and 64 bits. Since version 2.1, the command line version of BayeScan has been optimized to work on multicore processors. In practice this means that it will be much faster than previous versions as most machines now have at least 4 cores. By default BayeScan will detect the number of cores available on your machine and use them all (this number is written on the console at the beginning of the calculation). As this can make your computer difficult to use for other tasks at the same time, you can also force BayeScan to use the number n you want using the `-threads n` option.
 
 We also provide a Graphical User Interface (GUI) version based on the exact same code as the command line version, but only for Windows systems. **This version does not support multicore computing and will be much slower than the command line version on a multicore machine (basically any recent machine).**
 
@@ -111,7 +117,7 @@ Example files for microsatellites and SNPs are given in the files respectively c
 
 `6` is the number of alleles for the 8th locus. It has to be the same in all populations (even if some alleles are not observed in some populations).
 
-`4  10   0   6   3   1 are the number of observations for each of the 6 alleles in this population for the 8th locus. These number must sum to the total number of genes in the population, here 24.
+`4  10   0   6   3   1` are the number of observations for each of the 6 alleles in this population for the 8th locus. These number must sum to the total number of genes in the population, here 24.
 
 ### Dominant binary markers:
 
@@ -235,4 +241,4 @@ I would be very happy to help if you have some questions regarding BayeScan. How
 - If you are not sure whether BayeScan can be applied on your favorite species data set, I have to admit I certainly won't be able to know this better than you. The basic assumptions behind BayeScan are summarized in the introduction of this manual, and you can find more details in the related publications. Each violation of an assumption can lead to an excess of false positive or eventually false negative, but this is generally difficult to predict.  The correct way to do is to make simulations mimicking your real data and to see what BayeScan will produce. For example Fastsimcoal provides a very flexible way to simulate genetic data over a wide range of demographic scenario (http://cmpg.unibe.ch/software/fastsimcoal/).
 - If you compare BayeScan with other methods aiming at identifying makers under selection (FDist, detsel etc.) and find different results, that's maybe not a bug, but a nice feature! We are working hard to increase the power of our methods and to reduce false positives, so if the new methods keep giving the same answers as previous ones, this is useless. 
 
-Of course there are certainly some hidden bugs in BayeScan, and I would be grateful if you identify one of them... Despite the previous recommendations you should follow before contacting me, don't hesitate to send me a message here: [follm@iarc.fr](mailto:follm@iarc.fr)!
+Of course there are certainly some hidden bugs in BayeScan, and I would be grateful if you identify one of them... Despite the previous recommendations you should follow before contacting me, don't hesitate to send me a message here: [follm@iarc.fr](mailto:follm@iarc.fr)
