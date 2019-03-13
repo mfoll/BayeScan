@@ -133,7 +133,7 @@ For dominant binary AFLP markers an R script is provided to easily convert data 
 
 ### Amplification intensity matrix for AFLP markers:
 
-The format of this file is the same as the binary matrix format of AFLPDAT, but instead of indicating 0 or 1 for each individual (in rows) at each locus (in columns), one needs to write the corresponding measure of amplification intensity. The matrix of amplification intensity can be obtained from software such as GeneMapper. An example is given in the file `test_band_intensity_AFLP.txt`. At the beginning of each line, one has to indicate the index of individuals starting from 1 and the index of population also starting from 1.
+The format of this file is the same as the binary matrix format of AFLPDAT, but instead of indicating 0 or 1 for each individual (in rows) at each locus (in columns), one needs to write the corresponding measure of amplification intensity. The matrix of amplification intensity can be obtained from software such as GeneMapper. An example is given in the file `test_band_intensity_AFLP.txt`. At the beginning of each line, one has to indicate the index of individuals starting from 1 and the index of population also starting from 1. Any negative value (like -9) is considered a missing value.
 
 Using this type of data set in BayeScan requires very careful verification of your data as explained in Foll *et al.* 2010\. On average, amplification intensity should be twice for dominant homozygotes compared to heterozygotes. This means that the difference in amplification intensity due to different genotypes should be higher than the variance due to noisy data. In practice, one should check that some marker exhibit a bimodal distribution for non-zero amplification intensity. Additionally, one has to be sure that bimodality is not caused by artefacts, like different plates, lab technician, day of analysis etc. One way to check this is to look for X-linked markers where the two modes should correspond to the two sexes. In order to help people dealing with this type of data, we provide some R functions in the file `AFLP_data_functions.r`. The different functions are shortly described below:
 
@@ -163,9 +163,9 @@ This function allows to easily extract a subset of populations from a BayeScan b
 
 More details about the functions can be found in the header of the file by opening it using a text editor.
 
-- SNP genotype matrix:
+### SNP genotype matrix:
 
-This can be viewed as a special case of amplification intensity matrix where the genotype of individuals is supposed to be known. It has exactly the same format but instead of intensity values, on have to indicate for each individual at each locus the observed genotypes coded as `0`, `1` and `2`. An example is provided in the file `test_genotype_SNP.txt`. Please note that one has to check the corresponding box in the GUI or use the `-snp` argument in the command line version to use this type of data. This option has been used in Foll *et al.* (2010) to compare the power of AFLPs and SNPs to estimate inbreeding coefficient FIS. If you are not directly interested in FIS, you should rather use SNPs as a regular codominant data (see above), which leads to much faster computation.
+This can be viewed as a special case of amplification intensity matrix where the genotype of individuals is supposed to be known. It has exactly the same format but instead of intensity values, on have to indicate for each individual at each locus the observed genotypes coded as `0`, `1` and `2`. An example is provided in the file `test_genotype_SNP.txt`. Please note that one has to check the corresponding box in the GUI or use the `-snp` argument in the command line version to use this type of data. This option has been used in Foll *et al.* (2010) to compare the power of AFLPs and SNPs to estimate inbreeding coefficient FIS. If you are not directly interested in FIS, you should rather use SNPs as a regular codominant data (see above), which leads to much faster computation. Any negative value (like -9) is considered a missing value.
 
 ## 4. Interpreting and plotting outputs
 
