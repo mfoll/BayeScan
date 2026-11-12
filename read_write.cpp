@@ -812,6 +812,7 @@ int read_discarded(std::ifstream& infile)
         if (locus>=1 && locus <=I)
             discarded_loci[locus-1]=true;
     }
+    return 0;
 }
 
 ///////////////////////////////////
