@@ -71,8 +71,8 @@ void jump_model()
             -(-0.5*log(2*M_PI*var_alpha[i])-((alpha[i]-mean_alpha[i])*(alpha[i]-mean_alpha[i]))/(2*var_alpha[i]))-log(prior_odds);
 // inverse if we remove
     else
-        A+= (-0.5*log(2*M_PI*var_alpha[i])-((alpha[i]-mean_alpha[i])*(alpha[i]-mean_alpha[i]))/(2*var_alpha[i]))
-            -log_prior_alpha(alpha[i])+log(prior_odds);//-(-0.5*log(2*M_PI*sd_prior_alpha*sd_prior_alpha)-(alpha[i]*alpha[i])/(2*sd_prior_alpha*sd_prior_alpha));
+        A+= (-0.5*log(2*M_PI*var_alpha[i])-((old_alpha-mean_alpha[i])*(old_alpha-mean_alpha[i]))/(2*var_alpha[i]))
+            -log_prior_alpha(old_alpha)+log(prior_odds);//-(-0.5*log(2*M_PI*sd_prior_alpha*sd_prior_alpha)-(alpha[i]*alpha[i])/(2*sd_prior_alpha*sd_prior_alpha));
 
             r=randgen_parallel[omp_get_thread_num()].randDblExc();
 
@@ -158,8 +158,8 @@ void jump_model_codominant()
             -(-0.5*log(2*M_PI*var_alpha[i])-((alpha[i]-mean_alpha[i])*(alpha[i]-mean_alpha[i]))/(2*var_alpha[i]))-log(prior_odds);
 // inverse if we remove
     else
-        A+= (-0.5*log(2*M_PI*var_alpha[i])-((alpha[i]-mean_alpha[i])*(alpha[i]-mean_alpha[i]))/(2*var_alpha[i]))
-            -log_prior_alpha(alpha[i])+log(prior_odds);//-(-0.5*log(2*M_PI*sd_prior_alpha*sd_prior_alpha)-(alpha[i]*alpha[i])/(2*sd_prior_alpha*sd_prior_alpha));
+        A+= (-0.5*log(2*M_PI*var_alpha[i])-((old_alpha-mean_alpha[i])*(old_alpha-mean_alpha[i]))/(2*var_alpha[i]))
+            -log_prior_alpha(old_alpha)+log(prior_odds);//-(-0.5*log(2*M_PI*sd_prior_alpha*sd_prior_alpha)-(alpha[i]*alpha[i])/(2*sd_prior_alpha*sd_prior_alpha));
 
             r=randgen_parallel[omp_get_thread_num()].randDblExc();
 
