@@ -34,7 +34,14 @@ jobs:
         run: |
           set -eu
           g++ --version | head -1
-          g++ -O3 -std=gnu++11 -fopenmp -static -o "$EXE" start.cpp beta.cpp dirichlet.cpp RJupdates.cpp MHupdates.cpp likelihood.cpp read_write.cpp anyoption.cpp
+          # On Windows the C library declares a function named fstat, the name of a global
+          # variable of the program. The system headers are read first, then the variable is
+          # renamed for this compilation only: the source of the tag is not changed.
+          { grep -h '^ *#include *<' *.cpp *.h | tr -d '\r' | sed 's| *//.*||' | sort -u
+            echo '#include <sys/stat.h>'
+            echo '#define fstat bayescan_fstat_only'; } > windows_prefix.h
+          cat windows_prefix.h
+          g++ -O3 -std=gnu++11 -fopenmp -static -include windows_prefix.h -o "$EXE" start.cpp beta.cpp dirichlet.cpp RJupdates.cpp MHupdates.cpp likelihood.cpp read_write.cpp anyoption.cpp
           strip "$EXE"
           ls -l "$EXE"
           sha256sum "$EXE"
@@ -63,6 +70,9 @@ jobs:
           run aflp_bin      100 input_examples/test_binary_AFLP.txt
           run aflp_int      100 input_examples/test_band_intensity_AFLP.txt
           run msats         106 input_examples/test_msats.txt
+          # the option whose variable is renamed at compile time
+          "./$EXE" input_examples/test_SNPs.txt -fstat -od smoke -o fstat_only $SHORT > smoke/fstat_only.log 2>&1 || { tail -20 smoke/fstat_only.log; echo "fstat_only failed"; exit 1; }
+          echo "fstat_only: exit 0"
 
       - name: Default options on the SNP example
         shell: bash
