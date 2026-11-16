@@ -34,6 +34,15 @@ jobs:
         run: |
           set -eu
           g++ --version | head -1
+          echo "--- where the OpenMP library of the compiler is"
+          pacman -Ql mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-gcc-libs | grep -i gomp || true
+          pacman -Ss gomp || true
+          pacman -Ss 'ucrt-x86_64.*(openmp|libgomp)' || true
+          echo "--- compiler preinstalled on the machine"
+          ls -l /c/mingw64/bin/g++.exe 2>&1 || true
+          /c/mingw64/bin/g++.exe --version 2>&1 | head -1 || true
+          find /c/mingw64 -name 'libgomp*' 2>/dev/null | head || true
+          find /c/mingw64 -name 'libwinpthread*' 2>/dev/null | head || true
           # On Windows the C library declares a function named fstat, the name of a global
           # variable of the program. The system headers are read first, then the variable is
           # renamed for this compilation only: the source of the tag is not changed.
