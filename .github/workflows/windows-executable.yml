@@ -1,0 +1,86 @@
+name: Windows executable
+
+# Builds the Windows command-line executable from the source of a release tag,
+# runs it on the example files, and attaches it to that release.
+# It runs when this branch is pushed; nothing runs on master.
+
+on:
+  push:
+    branches: [build-windows-executable]
+
+permissions:
+  contents: write   # to attach the executable to the release
+
+env:
+  TAG: v2.2
+  EXE: BayeScan2.2_win64bits_cmd_line.exe
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ env.TAG }}
+
+      - uses: msys2/setup-msys2@ec48f7c5447b3140e2b088413ae3a55687bccb6e # v2.33.0
+        with:
+          msystem: UCRT64
+          install: mingw-w64-ucrt-x86_64-gcc
+
+      - name: Build a statically linked executable
+        shell: msys2 {0}
+        run: |
+          set -eu
+          g++ --version | head -1
+          g++ -O3 -std=gnu++11 -fopenmp -static -o "$EXE" start.cpp beta.cpp dirichlet.cpp RJupdates.cpp MHupdates.cpp likelihood.cpp read_write.cpp anyoption.cpp
+          strip "$EXE"
+          ls -l "$EXE"
+          sha256sum "$EXE"
+          objdump -p "$EXE" | grep "DLL Name" | sort -u
+          if objdump -p "$EXE" | grep "DLL Name" | grep -q -i -E "lib(gomp|winpthread|stdc|gcc)"; then
+            echo "the executable still needs a compiler library"; exit 1
+          fi
+
+      - name: Run on every example file, short chains
+        shell: bash
+        run: |
+          set -eu
+          mkdir -p smoke
+          SHORT="-threads 4 -n 1000 -thin 10 -nbp 5 -pilot 1000 -burn 2000"
+          run() {
+            name=$1; want=$2; shift 2
+            "./$EXE" "$@" -od smoke -o "$name" $SHORT > "smoke/$name.log" 2>&1 || { tail -20 "smoke/$name.log"; echo "$name failed"; exit 1; }
+            n=$(( $(wc -l < "smoke/${name}_fst.txt") - 1 ))
+            echo "$name: exit 0, $n loci"
+            [ "$n" -eq "$want" ] || { echo "expected $want loci"; exit 1; }
+          }
+          "./$EXE" -help 2>&1 | sed -n 1,4p || true
+          run snps         1000 input_examples/test_SNPs.txt
+          run snps_discard  994 input_examples/test_SNPs.txt -d input_examples/discarded.txt
+          run geno          100 input_examples/test_genotype_SNP.txt -snp
+          run aflp_bin      100 input_examples/test_binary_AFLP.txt
+          run aflp_int      100 input_examples/test_band_intensity_AFLP.txt
+          run msats         106 input_examples/test_msats.txt
+
+      - name: Default options on the SNP example
+        shell: bash
+        run: |
+          set -eu
+          mkdir -p default
+          start=$(date +%s)
+          "./$EXE" input_examples/test_SNPs.txt -od default -o v22 -threads 4 > default/v22.log 2>&1
+          echo "seconds: $(( $(date +%s) - start ))"
+          q05=$(awk 'NR>1 && $4<0.05 {n++} END{print n+0}' default/v22_fst.txt)
+          q01=$(awk 'NR>1 && $4<0.01 {n++} END{print n+0}' default/v22_fst.txt)
+          echo "loci with q<0.05: $q05, with q<0.01: $q01 (2.2 on Linux: 18 and 16; 2.1: 35 and 23)"
+          if [ "$q05" -lt 14 ] || [ "$q05" -gt 22 ]; then echo "outside the accepted range 14 to 22"; exit 1; fi
+
+      - name: Attach the executable to the release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          sha256sum "$EXE"
+          gh release upload "$TAG" "$EXE" --repo "$GITHUB_REPOSITORY"
