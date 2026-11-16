@@ -1,31 +1,31 @@
 # BayeScan makefile
 
-bayescan_2.1: start.o beta.o dirichlet.o RJupdates.o MHupdates.o likelihood.o read_write.o anyoption.o 
-	g++ -fopenmp -lpthread -lgomp -o bayescan_2.1 start.o beta.o dirichlet.o RJupdates.o MHupdates.o likelihood.o read_write.o anyoption.o 
+bayescan_2.2: start.o beta.o dirichlet.o RJupdates.o MHupdates.o likelihood.o read_write.o anyoption.o 
+	g++ -O3 -std=gnu++11 -fopenmp -lpthread -lgomp -o bayescan_2.2 start.o beta.o dirichlet.o RJupdates.o MHupdates.o likelihood.o read_write.o anyoption.o 
 
 start.o: start.cpp errors.cpp anyoption.h global_defs.h
-	g++ -fopenmp -c start.cpp errors.cpp 
+	g++ -O3 -std=gnu++11 -fopenmp -c start.cpp errors.cpp 
 
 beta.o: beta.cpp global_defs.h
-	g++ -fopenmp -c beta.cpp 
+	g++ -O3 -std=gnu++11 -fopenmp -c beta.cpp 
       
 dirichlet.o: dirichlet.cpp global_defs.h
-	g++ -fopenmp -c dirichlet.cpp 
+	g++ -O3 -std=gnu++11 -fopenmp -c dirichlet.cpp 
 
 RJupdates.o: RJupdates.cpp global_defs.h
-	g++ -fopenmp -c RJupdates.cpp 
+	g++ -O3 -std=gnu++11 -fopenmp -c RJupdates.cpp 
 
 MHupdates.o: MHupdates.cpp global_defs.h
-	g++ -fopenmp -c MHupdates.cpp 
+	g++ -O3 -std=gnu++11 -fopenmp -c MHupdates.cpp 
 
 likelihood.o: likelihood.cpp global_defs.h
-	g++ -fopenmp -c likelihood.cpp 
+	g++ -O3 -std=gnu++11 -fopenmp -c likelihood.cpp 
 
 read_write.o: read_write.cpp errors.cpp global_defs.h
-	g++ -fopenmp -c read_write.cpp errors.cpp 
+	g++ -O3 -std=gnu++11 -fopenmp -c read_write.cpp errors.cpp 
 
 anyoption.o: anyoption.cpp anyoption.h 
-	g++ -fopenmp -c anyoption.cpp 
+	g++ -O3 -std=gnu++11 -fopenmp -c anyoption.cpp 
 
 clean: 
-	rm *.o bayescan_2.1
+	rm *.o bayescan_2.2
