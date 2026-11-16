@@ -1,5 +1,19 @@
 # BayeScan 
 
+## Important: error corrected in version 2.2 (November 2026)
+
+**All versions of BayeScan before 2.2 contain an error that makes the posterior probabilities of selection too high. Please use version 2.2 or later, and run again the analyses made with an earlier version.**
+
+In the reversible-jump step, the move that removes the selection term (alpha) of a locus computed its acceptance probability after setting alpha to zero. The proposal and prior densities were therefore evaluated at zero and not at the value being removed, and the move was accepted too rarely for loci whose alpha is far from zero. As a consequence:
+
+- The posterior probabilities for the model including selection were overestimated, and the q-values underestimated. Loci with intermediate evidence are the most affected. Loci with no evidence of selection and loci with very strong evidence change little, and the ranking of the loci is almost unchanged.
+- More loci passed a given threshold than should have. With the example file `test_SNPs.txt` and the default options, 35 loci have a q-value below 0.05 with version 2.1, and 18 with version 2.2.
+- Running longer chains does not correct the error.
+
+The error is in the code and not in the model: the equations of Foll and Gaggiotti (2008) are correct. It concerns all types of data. It is present in versions 2.0, 2.01 and 2.1, including the executables distributed with them and the Windows graphical interface, and very likely in version 1.0.
+
+Many thanks to Luis Mijangos and his colleagues of the [dartR](https://github.com/green-striped-gecko/dartR) team, who found the error, demonstrated it by comparing BayeScan with an exact computation of the posterior probabilities, and contributed the correction ([pull request #9](https://github.com/mfoll/BayeScan/pull/9)).
+
 ## 1. Introduction
 
 This program, BayeScan aims at identifying candidate loci under natural selection from genetic data, using differences in allele frequencies between populations. BayeScan is based on the multinomial-Dirichlet model. One of the scenarios covered consists of an island model in which subpopulation allele frequencies are correlated through a common migrant gene pool from which they differ in varying degrees. The difference in allele frequency between this common gene pool and each subpopulation is measured by a subpopulation specific FST coefficient. Therefore, this formulation can consider realistic ecological scenarios where the effective size and the immigration rate may differ among subpopulations.
@@ -30,9 +44,9 @@ BayeScan and its improvements have been described successively in:
 
 ## 2. BayeScan usage
 
-BayeScan is command line based open source software, published under the GNU General Public License as published by the Free Software Foundation (see http://www.gnu.org/licenses/). BayeScan is coded using standard C++ and can be easily compiled under any system having a C++ compiler available using the `Makefile` provided along with the source code (just typing `make` in a terminal in the source folder should create the executable file). We provide executable ready to be used under Windows, MacOS (intel), Linux 32 bits and 64 bits. Since version 2.1, the command line version of BayeScan has been optimized to work on multicore processors. In practice this means that it will be much faster than previous versions as most machines now have at least 4 cores. By default BayeScan will detect the number of cores available on your machine and use them all (this number is written on the console at the beginning of the calculation). As this can make your computer difficult to use for other tasks at the same time, you can also force BayeScan to use the number n you want using the `-threads n` option.
+BayeScan is command line based open source software, published under the GNU General Public License as published by the Free Software Foundation (see http://www.gnu.org/licenses/). BayeScan is coded using standard C++ and can be easily compiled under any system having a C++ compiler available using the `Makefile` provided along with the source code (just typing `make` in a terminal in the source folder should create the executable file). With version 2.2 we provide executables ready to be used under Linux (64 bits) and macOS (Apple Silicon); on other systems BayeScan has to be compiled from the source code. Since version 2.1, the command line version of BayeScan has been optimized to work on multicore processors. In practice this means that it will be much faster than previous versions as most machines now have at least 4 cores. By default BayeScan will detect the number of cores available on your machine and use them all (this number is written on the console at the beginning of the calculation). As this can make your computer difficult to use for other tasks at the same time, you can also force BayeScan to use the number n you want using the `-threads n` option.
 
-We also provide a Graphical User Interface (GUI) version based on the exact same code as the command line version, but only for Windows systems. **This version does not support multicore computing and will be much slower than the command line version on a multicore machine (basically any recent machine).**
+A Graphical User Interface (GUI) version for Windows systems was distributed up to version 2.1. **It has not been updated to version 2.2: it contains the error described at the top of this document and should no longer be used.**
 
 The only compulsory argument to set in BayeScan is the input file describing the multilocus genetic data (see input file preparation section for details about the file format). There is no limitation for the size of the data, but your computer's memory. All the other options have default values and can to be set using the graphical user interface under Windows systems, or using command line arguments for the command line version. Just starting the command line version without any argument will display the full list of options:
 
