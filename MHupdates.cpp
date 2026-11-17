@@ -216,7 +216,9 @@ void update_freq()
                 A= diff_log_likelihood
                    +(theta*freq_ancestral[i]-1)*(log(pop[j].locus[i].p)-log(old_freq))
                    + (theta*(1-freq_ancestral[i])-1)*(log(1-pop[j].locus[i].p)-log(1-old_freq))
-                   + log((1-prop_small)*BwPrp+prop_small*BwPrp2) - log((1-prop_small)*FwPrp+prop_small*FwPrp2);
+                   // density of the two-scale proposal, back over forth: the small window only counts when the move fits in it
+                   + log((1-prop_small)/FwPrp+(fabs(pop[j].locus[i].p-old_freq)<=e_small ? prop_small/FwPrp2 : 0.0))
+                   - log((1-prop_small)/BwPrp+(fabs(pop[j].locus[i].p-old_freq)<=e_small ? prop_small/BwPrp2 : 0.0));
 
                 r=randgen_parallel[omp_get_thread_num()].randDblExc();
                 // reject proposed value
