@@ -833,7 +833,7 @@ void update_freq_intensity()// selection2
                 // propose the new values
                 u=randgen_parallel[omp_get_thread_num()].rand(BwPrp)+max(0.0+epsilon,old_freq-e_freq[i][j]);
                 if (u<=epsilon) u=epsilon;
-                if (u>=1-epsilon) u=epsilon;
+                if (u>=1-epsilon) u=1-epsilon;
                 pop[j].locus[i].p=u;
 
                 // calculate backward proposition probability =q(p,p')
