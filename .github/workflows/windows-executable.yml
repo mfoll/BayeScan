@@ -12,8 +12,8 @@ permissions:
   contents: write   # to attach the executable to the release
 
 env:
-  TAG: v2.2
-  EXE: BayeScan2.2_win64bits_cmd_line.exe
+  TAG: v2.3
+  EXE: BayeScan2.3_win64bits_cmd_line.exe
 
 jobs:
   windows:
@@ -81,12 +81,23 @@ jobs:
           set -eu
           mkdir -p default
           start=$(date +%s)
-          "./$EXE" input_examples/test_SNPs.txt -od default -o v22 -threads 4 > default/v22.log 2>&1
+          "./$EXE" input_examples/test_SNPs.txt -od default -o snps -threads 4 > default/snps.log 2>&1
           echo "seconds: $(( $(date +%s) - start ))"
-          q05=$(awk 'NR>1 && $4<0.05 {n++} END{print n+0}' default/v22_fst.txt)
-          q01=$(awk 'NR>1 && $4<0.01 {n++} END{print n+0}' default/v22_fst.txt)
-          echo "loci with q<0.05: $q05, with q<0.01: $q01 (2.2 on Linux: 18 and 16; 2.1: 35 and 23)"
+          q05=$(awk 'NR>1 && $4<0.05 {n++} END{print n+0}' default/snps_fst.txt)
+          q01=$(awk 'NR>1 && $4<0.01 {n++} END{print n+0}' default/snps_fst.txt)
+          echo "loci with q<0.05: $q05, with q<0.01: $q01 (2.2 and 2.3 on Linux: 18 and 16; 2.1: 35 and 23)"
           if [ "$q05" -lt 14 ] || [ "$q05" -gt 22 ]; then echo "outside the accepted range 14 to 22"; exit 1; fi
+
+      - name: Binary AFLP example, the data concerned by the correction of 2.3
+        shell: bash
+        run: |
+          set -eu
+          start=$(date +%s)
+          "./$EXE" input_examples/test_binary_AFLP.txt -od default -o aflp -threads 4 -n 20000 > default/aflp.log 2>&1
+          echo "seconds: $(( $(date +%s) - start ))"
+          fst=$(awk 'NR>1 {s+=$6} END{printf "%.4f", s/(NR-1)}' default/aflp_fst.txt)
+          echo "mean FST: $fst (2.3 on Linux and macOS: 0.216; 2.2: 0.199)"
+          awk -v f="$fst" 'BEGIN{ exit !(f > 0.210 && f < 0.223) }' || { echo "outside the accepted range 0.210 to 0.223"; exit 1; }
 
       - name: Attach the executable to the release
         shell: bash
