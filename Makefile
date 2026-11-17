@@ -1,7 +1,7 @@
 # BayeScan makefile
 
-bayescan_2.2: start.o beta.o dirichlet.o RJupdates.o MHupdates.o likelihood.o read_write.o anyoption.o 
-	g++ -O3 -std=gnu++11 -fopenmp -lpthread -lgomp -o bayescan_2.2 start.o beta.o dirichlet.o RJupdates.o MHupdates.o likelihood.o read_write.o anyoption.o 
+bayescan_2.3: start.o beta.o dirichlet.o RJupdates.o MHupdates.o likelihood.o read_write.o anyoption.o 
+	g++ -O3 -std=gnu++11 -fopenmp -lpthread -lgomp -o bayescan_2.3 start.o beta.o dirichlet.o RJupdates.o MHupdates.o likelihood.o read_write.o anyoption.o 
 
 start.o: start.cpp errors.cpp anyoption.h global_defs.h
 	g++ -O3 -std=gnu++11 -fopenmp -c start.cpp errors.cpp 
@@ -28,4 +28,4 @@ anyoption.o: anyoption.cpp anyoption.h
 	g++ -O3 -std=gnu++11 -fopenmp -c anyoption.cpp 
 
 clean: 
-	rm *.o bayescan_2.2
+	rm *.o bayescan_2.3
