@@ -64,7 +64,7 @@ GLOB float codominant; // selection2 indicates the type of markers 0 for dominan
 
 GLOB bool SNP_genotypes; // boolean indicating that input file is SNP genotypes (0=aa, 1=Aa, 2=AA) as for AFLPs
 
-GLOB bool fstat; // boolean indicating if we only calculate F-stat (no selection)
+GLOB bool fstat_only; // boolean indicating if we only calculate F-stat (no selection)
 GLOB bool all_trace; // boolean indicating if we output the alpha parameters in the MCMC trace
 
 GLOB double *alpha; // vector of locus effect

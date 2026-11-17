@@ -180,8 +180,8 @@ int main(int argc, char **argv)
     else SNP_genotypes=false;
 
     if (opt->getFlag( "fstat" ) )
-        fstat=true;
-    else fstat=false;
+        fstat_only=true;
+    else fstat_only=false;
 	
 	if (opt->getFlag( "all_trace" ) )
         all_trace=true;
@@ -624,7 +624,7 @@ int main(int argc, char **argv)
             else
                 update_beta_codominant();
 
-            if (!fstat)   // update selection related parameters
+            if (!fstat_only)   // update selection related parameters
             {
                 /*for (int i=0;i<I;i++)
                 {
@@ -865,7 +865,7 @@ int main(int argc, char **argv)
         mainout << "Fst" << (j+1) << " " ;
     }
 
-    if (!fstat && all_trace)
+    if (!fstat_only && all_trace)
     {
         for (int i=0;i<I;i++)
         {
@@ -965,7 +965,7 @@ int main(int argc, char **argv)
          else
              update_beta_codominant();
 
-        if (!fstat)   // update selection related parameters
+        if (!fstat_only)   // update selection related parameters
         {
             /*for (int i=0;i<I;i++)
             {
@@ -1020,7 +1020,7 @@ int main(int argc, char **argv)
         else
             update_freq_intensity();
 
-        if (!fstat)   // update selection related parameters
+        if (!fstat_only)   // update selection related parameters
         {
             /*for (int i=0;i<I;i++)
             {
